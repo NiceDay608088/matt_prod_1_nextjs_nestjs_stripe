@@ -3,8 +3,12 @@ import { RentalPropertyEnum } from 'src/enums/rental-property-enum';
 
 export const RentalPropertySchema = new mongoose.Schema({
   name: String,
-  type: RentalPropertyEnum,
+  type: {
+    type: String,
+    enum: Object.values(RentalPropertyEnum),
+    required: true,
+  },
   price: Number,
-  location: String,
-  image: String, // storage path
+  address: String,
+  imageUrl: String, // storage path
 });
