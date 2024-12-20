@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { RentalPropertyEnum } from 'src/enums/rental-property-enum';
 
 export const RentalPropertySchema = new mongoose.Schema({
@@ -8,7 +8,7 @@ export const RentalPropertySchema = new mongoose.Schema({
     enum: Object.values(RentalPropertyEnum),
     required: true,
   },
-  price: Number,
+  price: { type: Schema.Types.Double },
   address: String,
   imageUrl: String, // storage path
 });
