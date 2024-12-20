@@ -11,16 +11,15 @@ interface MyIconProps {
 
 const MyIcon = ({
   component: IconComponent,
-  size = 70,
+  size = 50,
   textColor = "text-gray-600",
   bgColor = "bg-transparent",
   padding = 3,
 }: MyIconProps) => {
   return (
-    <IconComponent
-      size={size}
-      className={` ${textColor} ${bgColor} p-${padding} rounded-full `}
-    />
+    <div className={`p-${padding} rounded-full ${textColor} ${bgColor}`}>
+      <IconComponent size={size} />
+    </div>
   );
 };
 
