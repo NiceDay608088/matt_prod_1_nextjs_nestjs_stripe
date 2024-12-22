@@ -6,6 +6,8 @@ import { RentalPropertyModule } from './rental-property/rental-property.module';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { StripeModule } from './stripe/stripe.module';
+import { ControllerService } from './controller/controller.service';
 
 @Module({
   imports: [
@@ -19,8 +21,9 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
     PaymentModule,
     TenantRoomModule,
     RentalPropertyModule,
+    StripeModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [ControllerService],
 })
 export class AppModule {}
