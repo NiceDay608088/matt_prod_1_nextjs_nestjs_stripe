@@ -11,7 +11,7 @@ interface MyIconProps {
 
 const MyIcon = ({
   component: IconComponent,
-  size = 50,
+  size = 40,
   textColor = "text-gray-600",
   bgColor = "bg-transparent",
   padding = 3,

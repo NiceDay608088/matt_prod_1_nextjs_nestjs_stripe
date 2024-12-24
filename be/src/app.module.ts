@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
-import { PaymentModule } from './payment/payment.module';
 import { DatabaseModule } from './database/database.module';
 import { TenantRoomModule } from './tenant-room/tenant-room.module';
 import { RentalPropertyModule } from './rental-property/rental-property.module';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { StripeModule } from './stripe/stripe.module';
-import { ControllerService } from './controller/controller.service';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -21,9 +19,8 @@ import { ControllerService } from './controller/controller.service';
     PaymentModule,
     TenantRoomModule,
     RentalPropertyModule,
-    StripeModule,
   ],
   controllers: [],
-  providers: [ControllerService],
+  providers: [],
 })
 export class AppModule {}

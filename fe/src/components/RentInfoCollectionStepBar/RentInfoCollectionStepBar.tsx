@@ -14,7 +14,7 @@ const RentInfoCollectionStepBar = () => {
           textColor="text-white"
           bgColor="bg-red-700"
         />
-        <div className="mt-8 ">
+        <div className="mt-6 text-red-700">
           Step 1 <br />
           Holding deposit
         </div>
@@ -32,7 +32,7 @@ const RentInfoCollectionStepBar = () => {
           // textColor="text-white"
           // bgColor="bg-red-700"
         />
-        <div className="mt-8">
+        <div className="mt-6">
           Step 2 <br />
           Credit and referencing
         </div>
@@ -50,7 +50,7 @@ const RentInfoCollectionStepBar = () => {
           // textColor="text-white"
           // bgColor="bg-red-700"
         />
-        <div className="mt-8">
+        <div className="mt-6">
           Step 3 <br />
           Tenancy agreement
         </div>
