@@ -8,6 +8,19 @@ import {
 } from "@stripe/react-stripe-js";
 import { FiCreditCard } from "react-icons/fi";
 
+const createPaymentIntent = `
+mutation CreatePaymentIntent($currency: String!, $amount: Float!) {
+  createPaymentIntent(createPaymentIntentDto: { currency: $currency, amount: $amount }) {
+    clientSecret
+  }
+}
+`;
+
+const createPaymentIntentVariables = {
+  currency: "USD",
+  amount: 99.99,
+};
+
 const StripeForm = () => {
   const stripe = useStripe();
   const elements = useElements();
@@ -28,19 +41,16 @@ const StripeForm = () => {
 
     try {
       // Step 1: Create a payment intent on the server
-      const response = await fetch(
-        "http://localhost:3001/payment/webhooks/stripe",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            price: 25,
-            amount: 30,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:3001/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: createPaymentIntent,
+          variables: createPaymentIntentVariables,
+        }),
+      });
 
       if (!response.ok) {
         const responseBody = await response.text();
@@ -48,7 +58,12 @@ const StripeForm = () => {
         throw new Error(`Payment Intent API failed: ${responseBody}`);
       }
 
-      const { client_secret: clientSecret } = await response.json();
+      const data = await response.json();
+      console.log("before data------------------------ ");
+      console.log(data);
+      console.log("after  data------------------------ ");
+      const clientSecret = data.data.createPaymentIntent.clientSecret;
+
       console.log("Payment Intent created successfully:", clientSecret);
 
       // Step 2: Confirm the card payment

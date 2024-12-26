@@ -30,7 +30,7 @@ export class PaymentService {
     }
 
     const r = { stripeSecretKey, stripeSigningSecret };
-    console.log(r);
+    // console.log(r);
 
     return r;
   };
@@ -41,7 +41,7 @@ export class PaymentService {
   ): Promise<Stripe.PaymentIntent> {
     // 1/3 paymentIntent.id
     return await this.stripe.paymentIntents.create({
-      amount,
+      amount: amount * 100,
       currency, // 'USD', 'EUR', 'GBP' ....
     });
   }
@@ -64,15 +64,28 @@ export class PaymentService {
 
     // console.log({ eventType: event.type, data: event.data.object }); // 3/3 event.data.object.id is paymentIntent.id
     switch (event.type) {
+      case 'payment_intent.created':
+        const pic = event.data.object as Stripe.PaymentIntent;
+        console.log(`PaymentIntent was created  ${pic.id}`);
+        break;
       case 'payment_intent.succeeded':
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log(`PaymentIntent was successful  ${paymentIntent.id}`);
+        const pis = event.data.object as Stripe.PaymentIntent;
+        console.log(`PaymentIntent was successful  ${pis.id}`);
         break;
       case 'payment_intent.payment_failed':
-        const paymentFailedIntent = event.data.object as Stripe.PaymentIntent;
-        console.log(`PaymentIntent failed ${paymentIntent.id}`);
+        const pif = event.data.object as Stripe.PaymentIntent;
+        console.log(`PaymentIntent was failed ${pif.id}`);
         break;
-      // Handle other event types here...
+      case 'charge.succeeded':
+        const cs = event.data.object as Stripe.Charge;
+        const cspii = cs.payment_intent as String;
+        console.log(`Charge was succeed ${cspii}`);
+        break;
+      case 'charge.updated':
+        const cu = event.data.object as Stripe.Charge;
+        const cupii = cu.payment_intent as String;
+        console.log(`Charge was updated ${cupii}`);
+        break;
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }

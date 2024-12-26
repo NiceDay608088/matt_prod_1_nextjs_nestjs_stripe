@@ -11,6 +11,13 @@ export class PaymentController {
     @Req() req: RawBodyRequest<Request>,
     @Res() res: Response,
   ) {
-    this.paymentService.handleStripeWebhook(req);
+    console.log('...here...');
+    try {
+      await this.paymentService.handleStripeWebhook(req);
+      res.status(200).send('Received');
+    } catch (error) {
+      console.error('Webhook handling error:', error.message);
+      res.status(400).send(`Webhook Error: ${error.message}`);
+    }
   }
 }
