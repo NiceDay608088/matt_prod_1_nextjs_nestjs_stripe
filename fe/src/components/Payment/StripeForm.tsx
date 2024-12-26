@@ -101,8 +101,8 @@ const StripeForm = () => {
   };
 
   return (
-    <form className="w-full flex justify-center">
-      <div className="min-w-[350px] w-full sm:w-[480px] flex flex-col text-lg gap-10">
+    <form className="w-full h-full flex justify-center items-center">
+      <div className="min-w-[350px] w-full h-full sm:w-[480px] flex flex-col text-lg justify-between">
         {/* input fields */}
         <div className="flex flex-col shadow-lg bg-white">
           {/* card number row */}

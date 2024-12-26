@@ -16,9 +16,9 @@ const TenantRoomPage = () => {
       <div className="hidden sm:block">
         <RentInfoCollectionStepBar />
       </div>
-      <div className="flex flex-col md:flex-row gap-2 xl:gap-0 m-5">
+      <div className="flex flex-col md:flex-row  gap-12 xl:gap-0 m-5">
         {/* left panel */}
-        <div className="flex-1 flex flex-col sm:flex-row">
+        <div className="flex-1 flex flex-col sm:flex-row sm:justify-center ">
           {/* Left panel -> Left Image */}
           <div className="w-full sm:w-[250px] h-[250px]">
             <Image
@@ -46,7 +46,7 @@ const TenantRoomPage = () => {
           </div>
         </div>
         {/* Right panel */}
-        <div className="flex-1">
+        <div className="flex-1 ">
           <Payment />
         </div>
       </div>
