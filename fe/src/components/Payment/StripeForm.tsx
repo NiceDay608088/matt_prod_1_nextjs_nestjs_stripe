@@ -1,25 +1,16 @@
-import React, { useState } from "react";
-import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { Stripe, StripeCardElement } from "@stripe/stripe-js";
+import React from "react";
+import {
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { FiCreditCard } from "react-icons/fi";
 
 const StripeForm = () => {
   const stripe = useStripe();
   const elements = useElements();
-  const [error, setError] = useState<string | undefined>(undefined);
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const getBankCardInfo = async (
-    stripe: Stripe,
-    cardElement: StripeCardElement
-  ) => {
-    console.log("...4");
-    const { token, error } = await stripe?.createToken(cardElement);
-    return {
-      brand: token?.card?.brand,
-      country: token?.card?.country,
-      error1: error,
-    };
-  };
 
   /*
     Card Number: 4242 4242 4242 4242
@@ -27,95 +18,104 @@ const StripeForm = () => {
     CVC: 123
     ZIP Code: 12345
   */
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setIsProcessing(true);
+  const handlePayment = async (event: any) => {
+    event.preventDefault();
 
-    console.log("...");
     if (!stripe || !elements) {
-      console.log("...1");
-      setError("stripe or elements is missing.");
-      setIsProcessing(false);
+      console.error("Stripe or Elements has not loaded yet.");
       return;
     }
 
-    const cardElement = elements?.getElement(CardElement);
-    if (!cardElement) {
-      console.log("...2");
-      setError("card element is missing.");
-      setIsProcessing(false);
-      return;
-    }
-
-    console.log("...2");
-    const { brand, country, error1 } = await getBankCardInfo(
-      stripe,
-      cardElement
-    );
-    if (error1) {
-      setError(error1.message);
-      setIsProcessing(false);
-      console.log("...5");
-    } else {
-      console.log("....", { brand, country });
-    }
-
-    const query = `
-      mutation CreatePaymentIntent($createPaymentIntentDto: CreatePaymentIntentDto!) {
-        createPaymentIntent(createPaymentIntentDto: $createPaymentIntentDto) {
-          clientSecret
+    try {
+      // Step 1: Create a payment intent on the server
+      const response = await fetch(
+        "http://localhost:3001/payment/webhooks/stripe",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            price: 25,
+            amount: 30,
+          }),
         }
-      }
-    `;
-    const variables = {
-      createPaymentIntentDto: {
-        amount: 120,
-        currency: "USD",
-      },
-    };
-    console.log("...6");
-    const res = await fetch("http://localhost:3001/graphql", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query, variables }),
-    });
-    const result = await res.json();
-    console.log("...7");
-    if (result.errors) {
-      const err = result.errors[0].message;
-      setError(err);
-      console.log("...8", { err });
-      setIsProcessing(false);
-    }
+      );
 
-    const clientSecret = result.data.createPaymentIntent.clientSecret;
-    console.log({ clientSecret, result });
-    const { paymentIntent, error } = await stripe.confirmCardPayment(
-      clientSecret,
-      {
-        payment_method: { card: cardElement },
+      if (!response.ok) {
+        const responseBody = await response.text();
+        console.error("Payment Intent API Error:", responseBody);
+        throw new Error(`Payment Intent API failed: ${responseBody}`);
       }
-    );
-    if (error) {
-      setError(error.message);
-      console.log("...9", { error });
-      setIsProcessing(false);
-    }
 
-    console.log({ paymentIntent }); // 2/3 paymentIntent.id
-    setIsProcessing(false);
+      const { client_secret: clientSecret } = await response.json();
+      console.log("Payment Intent created successfully:", clientSecret);
+
+      // Step 2: Confirm the card payment
+      const cardNumberElement = elements.getElement(CardNumberElement);
+      const cardExpiryElement = elements.getElement(CardExpiryElement);
+      const cardCvcElement = elements.getElement(CardCvcElement);
+
+      if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
+        console.error(
+          "CardNumberElement or CardExpiryElement or CardCvcElement is null."
+        );
+        throw new Error(
+          "CardNumberElement or CardExpiryElement or CardCvcElement is null."
+        );
+      }
+
+      const { paymentIntent, error } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardNumberElement,
+          },
+        }
+      );
+
+      if (error) {
+        console.error("Error confirming card payment:", error.message);
+        throw new Error(error.message);
+      }
+
+      console.log("Payment successful:", paymentIntent);
+    } catch (err) {
+      console.error("Payment processing error:", err);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>{isProcessing ? "processing" : "not processing..."}</div>
-      <CardElement />
-      <button type="submit" disabled={isProcessing}>
-        Pay Button
-      </button>
-      {error && <div className=" text-red-500 bg-blue-100">{error}</div>}
+    <form className="w-full flex justify-center">
+      <div className="min-w-[350px] w-full sm:w-[480px] flex flex-col text-lg gap-10">
+        {/* input fields */}
+        <div className="flex flex-col shadow-lg bg-white">
+          {/* card number row */}
+          <div className="flex items-center  py-4 gap-5">
+            <span className="w-32 text-right">Card number</span>
+            <CardNumberElement className="flex-1" />
+            <span className="pr-4">
+              <FiCreditCard size={25} className=" text-gray-500" />
+            </span>
+          </div>
+          {/* expiry date row */}
+          <div className="flex items-center gap-5">
+            <span className="w-32 text-right">Expiry date</span>
+            <CardExpiryElement className="flex-1" />
+          </div>
+          {/* cvc */}
+          <div className="flex items-center py-4 gap-5">
+            <span className="w-32 text-right">CVC</span>
+            <CardCvcElement className="flex-1" />
+          </div>
+        </div>
+        <button
+          onClick={handlePayment}
+          className="w-full bg-[#666EE8] text-white py-2"
+        >
+          Pay $25
+        </button>
+      </div>
     </form>
   );
 };

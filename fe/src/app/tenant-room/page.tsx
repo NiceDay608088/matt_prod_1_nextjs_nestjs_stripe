@@ -16,9 +16,10 @@ const TenantRoomPage = () => {
       <div className="hidden sm:block">
         <RentInfoCollectionStepBar />
       </div>
-      <div className="flex flex-col xl:flex-row gap-2 m-5">
+      <div className="flex flex-col md:flex-row gap-2 xl:gap-0 m-5">
         {/* left panel */}
-        <div className="flex-1 flex flex-col sm:flex-row  gap-4">
+        <div className="flex-1 flex flex-col sm:flex-row">
+          {/* Left panel -> Left Image */}
           <div className="w-full sm:w-[250px] h-[250px]">
             <Image
               src="/rental_property_default.jpg"
@@ -45,14 +46,8 @@ const TenantRoomPage = () => {
           </div>
         </div>
         {/* Right panel */}
-        <div className="flex-1 p-4 flex flex-col gap-4">
-          <div className="text-gray-500 text-lg">
-            Once the holding deposit is paid, we shall reserve the property for
-            you and remove the property from the market.
-          </div>
-          <div className="mt-10">
-            <Payment />
-          </div>
+        <div className="flex-1">
+          <Payment />
         </div>
       </div>
     </div>
