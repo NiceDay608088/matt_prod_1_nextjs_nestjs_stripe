@@ -39,9 +39,9 @@ const TenantRoomPage = async ({
       <div className="hidden sm:block">
         <RentInfoCollectionStepBar />
       </div>
-      <div className="flex flex-col lg:flex-row  gap-12 xl:gap-0 m-5">
+      <div className="p-0 sm:px-8 lg:p-0 flex flex-col lg:flex-row  gap-12 xl:gap-0 m-5">
         {/* left panel */}
-        <div className="flex-1 flex flex-col sm:flex-row sm:justify-center ">
+        <div className="flex-1 flex flex-col sm:flex-row sm:justify-center w-full ">
           {/* Left panel -> Left Image */}
           <div className="min-w-[250px] sm:w-[250px] h-[250px]">
             <Image
@@ -53,7 +53,7 @@ const TenantRoomPage = async ({
             />
           </div>
           {/* Left panel -> Right text */}
-          <div className="flex flex-col justify-between px-4 gap-7">
+          <div className="flex-1 flex flex-col justify-between px-4 gap-7">
             {/* Top Text */}
             <div className="flex flex-col gap-3">
               <div className="font-bold text-2xl">{res.name}</div>

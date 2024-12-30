@@ -121,7 +121,7 @@ const StripeForm = ({ id }: PropType) => {
 
   return (
     <form className="w-full h-full flex justify-center items-center">
-      <div className="min-w-[350px] w-full h-full sm:w-[480px] flex flex-col text-lg gap-10 justify-normal sm:justify-between lg:gap-0">
+      <div className="min-w-[350px] w-full h-full sm:px-2 px-0 lg:px-0  flex flex-col text-lg gap-10 justify-normal sm:justify-between lg:gap-0">
         {/* input fields */}
         <div className="flex flex-col shadow-lg bg-white">
           {/* card number row */}
