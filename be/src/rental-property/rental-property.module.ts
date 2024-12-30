@@ -12,5 +12,6 @@ import { rentalPropertyProvider } from 'src/database/providers/rental-property.p
     RentalPropertyResolver,
     ...rentalPropertyProvider,
   ],
+  exports: [RentalPropertyService],
 })
 export class RentalPropertyModule {}

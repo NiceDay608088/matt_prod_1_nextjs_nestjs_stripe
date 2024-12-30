@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   CardNumberElement,
   CardExpiryElement,
@@ -7,6 +7,8 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { FiCreditCard } from "react-icons/fi";
+import { StripeCardNumberElementChangeEvent } from "@stripe/stripe-js";
+import CheckPrice from "@/app/tenant-room/CheckPrice";
 
 const createPaymentIntent = `
 mutation CreatePaymentIntent($currency: String!, $amount: Float!) {
@@ -21,9 +23,15 @@ const createPaymentIntentVariables = {
   amount: 99.99,
 };
 
-const StripeForm = () => {
+interface PropType {
+  id: string;
+}
+
+const StripeForm = ({ id }: PropType) => {
   const stripe = useStripe();
   const elements = useElements();
+
+  const [cardType, setCardType] = useState("");
 
   /*
     Card Number: 4242 4242 4242 4242
@@ -100,6 +108,17 @@ const StripeForm = () => {
     }
   };
 
+  // brand: "visa" | "mastercard" | "amex" | "discover" | "diners" | "jcb" | "unionpay" | "unknown"
+  const handleCardNumberChange = (
+    event: StripeCardNumberElementChangeEvent
+  ) => {
+    const { brand, complete } = event;
+    console.log("handleCardNumberChange", { event });
+    if (complete) {
+      setCardType(brand);
+    }
+  };
+
   return (
     <form className="w-full h-full flex justify-center items-center">
       <div className="min-w-[350px] w-full h-full sm:w-[480px] flex flex-col text-lg gap-10 justify-normal sm:justify-between lg:gap-0">
@@ -108,7 +127,10 @@ const StripeForm = () => {
           {/* card number row */}
           <div className="flex items-center  py-4 gap-5">
             <span className="w-32 text-right">Card number</span>
-            <CardNumberElement className="flex-1" />
+            <CardNumberElement
+              className="flex-1"
+              onChange={handleCardNumberChange}
+            />
             <span className="pr-4">
               <FiCreditCard size={25} className=" text-gray-500" />
             </span>
@@ -119,9 +141,14 @@ const StripeForm = () => {
             <CardExpiryElement className="flex-1" />
           </div>
           {/* cvc */}
-          <div className="flex items-center py-4 gap-5">
+          <div className="flex items-center pt-4 gap-5">
             <span className="w-32 text-right">CVC</span>
             <CardCvcElement className="flex-1" />
+          </div>
+          {/* stripe fee and actual price */}
+          <div className="flex items-center py-4 gap-5">
+            <span className="w-32 text-right">Price</span>
+            <CheckPrice cstClassName="flex-1" id={id} cardType={cardType} />
           </div>
         </div>
         <button

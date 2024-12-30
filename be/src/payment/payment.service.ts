@@ -2,12 +2,17 @@ import { Injectable, RawBodyRequest } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { Request, Response } from 'express';
+import { StripeRentFeeResponse } from './payment.dto';
+import { RentalPropertyService } from 'src/rental-property/rental-property.service';
 
 @Injectable()
 export class PaymentService {
   private stripe: Stripe;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private rentalPropertyService: RentalPropertyService,
+  ) {
     this.stripe = new Stripe(this.getEnv().stripeSecretKey);
   }
 
@@ -88,6 +93,35 @@ export class PaymentService {
         break;
       default:
         console.log(`Unhandled event type: ${event.type}`);
+    }
+  }
+
+  /**
+   * https://stripe.com/pricing
+   *
+   */
+  async getRentFee(
+    rentalPropertyId: string,
+    cardType: string,
+  ): Promise<StripeRentFeeResponse> {
+    const rentalProperty =
+      await this.rentalPropertyService.getRentalProperty(rentalPropertyId);
+
+    switch (cardType.toLowerCase()) {
+      case 'visa':
+        return {
+          price: rentalProperty.price,
+          fee: '0.5%',
+          total: rentalProperty.price * (1 + 0.5 / 100),
+          description: '+ 0.5% for manually entered cards',
+        };
+      default:
+        return {
+          price: -1,
+          fee: '-1',
+          total: -1,
+          description: `Bank Type: ${cardType} is not supported`,
+        };
     }
   }
 }

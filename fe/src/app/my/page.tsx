@@ -1,34 +1,11 @@
 import { notFound } from "next/navigation";
 import ClientComponent from "./ClientComponent";
+import { GQL_GET_RENTAL_PROPERTY_QUERY } from "@/utils/Contants";
+import { graphql_request } from "@/utils/request";
 
-// Define the GraphQL query
-const GET_RENTAL_PROPERTY_QUERY = `
-  query GetRentalProperty($id: String!) {
-    getRentalProperty(id: $id) {
-      id
-      name
-      price
-      type
-      address
-      imageUrl
-    }
-  }
-`;
-
-// Fetch data from the server using GraphQL request
 async function fetchServerData(id: string) {
-  const graphqlUrl = "http://localhost:3001/graphql"; // NestJS GraphQL endpoint
-
-  // Perform the GraphQL request using native fetch
-  const res = await fetch(graphqlUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query: GET_RENTAL_PROPERTY_QUERY,
-      variables: { id },
-    }),
+  const res = await graphql_request(GQL_GET_RENTAL_PROPERTY_QUERY, {
+    id,
   });
 
   const result = await res.json();
@@ -40,9 +17,10 @@ async function fetchServerData(id: string) {
   return result.data.getRentalProperty;
 }
 
-// SSR page component
+// SSR
 const MyPage = async ({ searchParams }: { searchParams: { id: string } }) => {
-  const { id } = searchParams;
+  const params = await searchParams;
+  const { id } = params;
 
   if (!id) {
     notFound(); // Trigger a 404 page if the ID is not available

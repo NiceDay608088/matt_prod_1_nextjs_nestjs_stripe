@@ -8,10 +8,15 @@ import StripeForm from "./StripeForm";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
-const Payment = () => {
+
+interface PropType {
+  id: string;
+}
+
+const Payment = ({ id }: PropType) => {
   return (
     <Elements stripe={stripePromise}>
-      <StripeForm />
+      <StripeForm id={id} />
     </Elements>
   );
 };
