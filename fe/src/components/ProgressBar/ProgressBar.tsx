@@ -5,19 +5,20 @@ interface PropType {
 }
 
 export const ProgressBar = ({ timerStarted }: PropType) => {
-  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
   //   console.log("uuid intervalId", uuidv4(), intervalId);
 
   useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+    let timeoutId: NodeJS.Timeout | null = null;
+
     if (timerStarted) {
       setVisible(true);
       if (progress == 100) {
         setProgress(0);
       }
-      const tmpId = setInterval(() => {
+      intervalId = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 90) {
             clearInterval(intervalId!);
@@ -26,13 +27,11 @@ export const ProgressBar = ({ timerStarted }: PropType) => {
           return prev + 10;
         });
       }, 100);
-      setIntervalId(tmpId);
     } else {
       setProgress(100);
-      const tmpId = setTimeout(() => {
+      timeoutId = setTimeout(() => {
         setVisible(false);
       }, 300);
-      setTimeoutId(tmpId);
     }
 
     return () => {
