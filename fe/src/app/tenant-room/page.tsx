@@ -5,6 +5,7 @@ import { BsWindow } from "react-icons/bs";
 import Payment from "@/components/Payment/Payment";
 import { graphql_request } from "@/utils/request";
 import { GQL_GET_RENTAL_PROPERTY_QUERY } from "@/utils/Contants";
+import ConfirmBox from "@/components/Popup/ConfirmBox";
 
 async function fetchServerData(id: string) {
   const res = await graphql_request(GQL_GET_RENTAL_PROPERTY_QUERY, {
@@ -29,6 +30,8 @@ const TenantRoomPage = async ({
   // ssr
   const params = await searchParams;
   const res = await fetchServerData(params.id);
+
+  // const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   if (!res) {
     return <div>Record id "{params.id}" doesn't exist.</div>;
@@ -73,6 +76,10 @@ const TenantRoomPage = async ({
           <Payment id={params.id} />
         </div>
       </div>
+      {/* popup */}
+      <ConfirmBox visibility={true}>
+        <div>Paid Succeed</div>
+      </ConfirmBox>
     </div>
   );
 };

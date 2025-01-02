@@ -1,6 +1,6 @@
 "use client";
 
-import Loading from "@/components/Loading/Loading";
+import LoadingIcon from "@/components/LoadingIcon/LoadingIcon";
 import { GQL_GET_RENTAL_PROPERTY_FEE } from "@/utils/Contants";
 import { graphql_request } from "@/utils/request";
 import React, { useEffect, useState } from "react";
@@ -82,7 +82,7 @@ const CheckPrice = ({ id, cardType, cstClassName }: PropType) => {
     console.log("page shows loading...");
     return (
       <div className="flex-1  flex justify-end pr-6">
-        <Loading />
+        <LoadingIcon />
       </div>
     );
   }
